@@ -1,7 +1,7 @@
 services:
   app:
     build:
-      context: . # Dockerifleがあるディレクトリのパスを定義
+      context: . # Dockerfileがあるディレクトリのパスを定義
       dockerfile: Dockerfile # Dockerfile名を指定
     ports: # ホストとコンテナのポートを紐づける
       - 3000:3000
