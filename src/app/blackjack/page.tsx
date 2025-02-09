@@ -1,34 +1,35 @@
 "use client";
-import React, { useMemo, useState } from 'react';
-import Cards from '@/components/cards/Cards';
-import ClickedCard from '@/components/cards/ClickedCard';
-import FisherYatesShuffle from '@/features/FisherYatesShuffle';
+import BaseCard from '@/components/cards/BaseCard';
+import useBlackJack from '@/hooks/useBlackJack';
 
-// ! リロード時にカードが2回変化する
 export default function Home() {
-    /**
-     * 初回レンダリング時のみ、カードをシャッフルする
-     */
-    const shuffledCards = useMemo(() => FisherYatesShuffle(Cards), []);
-
-    /**
-     * クリックしたカードを拡大または縮小
-     */
-    const [selectedCardId, setSelectedCardId] = useState<number | null>(null);
-    const handleCardClick = (id: number) => {
-        setSelectedCardId((prevId) => (prevId === id ? null : id));
-    };
+    // const { shuffledCardsArray, numberOfCardsInHand, handleDrawCard } = useBlackJack();
+    const { cardsInHand, handleDrawCard } = useBlackJack();
 
     return(
-        <div className="flex justify-center gap-10 mx-40 my-40">
-            {shuffledCards.slice(0,2).map((card) => (
-                <ClickedCard
-                    key={card.id}
-                    card={card}
-                    isSelected={selectedCardId === card.id}
-                    onClick={() => handleCardClick(card.id)}
-                />
-            ))}
+        <div>
+            <div className="flex justify-center gap-10 mx-40 my-40">
+                {/* {shuffledCardsArray.slice(0, numberOfCardsInHand).map((card) => (
+                    <BaseCard
+                        key={card.id}
+                        card={card}
+                    />
+                ))} */}
+                {cardsInHand.map((card, index) => (
+                    <BaseCard
+                        key={card.id}
+                        card={card}
+                        // 新たに引いたカードのみアニメションを追加
+                        className={index === cardsInHand.length - 1 && cardsInHand.length >= 3 ? "border-red-700" : ""}
+                    />
+                ))}
+            </div>
+
+            <div className="flex justify-center gap-10 mx-40 my-40">
+                {/* ! 後々ボタンはコンポーネント化 */}
+                <button onClick={handleDrawCard} className="">一枚引く</button>
+                <button>勝負！！</button>
+            </div>
         </div>
     );
 }
