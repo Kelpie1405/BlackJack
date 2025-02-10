@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import Cards from '@/components/cards/Cards';
 import FisherYatesShuffle from '@/features/FisherYatesShuffle';
 
@@ -17,28 +17,27 @@ export default function useBlackJack() {
     const [shuffledCardsArray] = useState<Card[]>(() => FisherYatesShuffle([...Cards]));
 
     /**
-     * 手札の枚数を管理するState
-     */
-    // const [numberOfCardsInHand, setNumberOfCardsInHand] = useState<number>(2);
-
-    /**
-     * 手札を管理するState
+     * 手札を管理するState（最初は2枚をセット）
      */
     const [cardsInHand, setCardsInHand] = useState<Card[]>(() => shuffledCardsArray.slice(0, 2));
 
+    /**
+     * 手札の合計値を計算する（手札が変化したときに実行）
+     */
+    const totalScore = useMemo(() => {
+        return cardsInHand.reduce((sum, card) => sum + card.number, 0);
+    },[cardsInHand]);
 
-    // const handleDrawCard = () => {
-    //     setNumberOfCardsInHand((prevNumber) => prevNumber + 1);
-    // };
-
+    /**
+     * 手札を追加するボタンのイベントハンドラ
+     */
     const handleDrawCard = () => {
-        setCardsInHand((prevCardsInHand) => shuffledCardsArray.slice(0, prevCardsInHand.length + 1));
+        setCardsInHand((prevCardsInHand) => [
+            ...prevCardsInHand,
+            shuffledCardsArray[prevCardsInHand.length]
+        ]);
+        console.log(cardsInHand);
     };
 
-    const calculateCardTotals = () => {
-
-    };
-
-    // return {shuffledCardsArray, numberOfCardsInHand, handleDrawCard};
-    return {cardsInHand, handleDrawCard};
+    return {cardsInHand, totalScore, handleDrawCard};
 };

@@ -40,6 +40,12 @@ const Cards: Card[] = [
         mark: 'clover',
         number: 6,
     },
+
+    {
+        id: 7,
+        mark: 'clover',
+        number: 7,
+    },
 ];
 
 export default Cards;
