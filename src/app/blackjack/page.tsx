@@ -23,12 +23,14 @@ export default function Home() {
 
     return(
         <div>
-
-            <div>
-                <h4>合計点数：
-                    <span>{totalScore}</span>
+            <div className="me-16 mt-16">
+                <h4 className="text-right text-3xl font-bold">
+                    <span className="p-4 border-black border-4">合計点数：
+                        <span> {totalScore}</span>
+                    </span>
                 </h4>
             </div>
+
             <div className="flex justify-center gap-10 mx-40 my-40">
                 {cardsInHand.map((card, index) => (
                     <BaseCard

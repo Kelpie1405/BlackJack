@@ -22,11 +22,11 @@ const BaseCard = ({ card, className = "" }: { card: CardProps, className: string
 
     // ToDo: 数字とマークのボーダーラインを消す
     return (
-        <div className={`w-32 h-40 border border-blue-400 relative ${className}`}>
-            <span className="w-6 h-8 absolute top-2 left-2 text-3xl text-center border">{card.number}</span>
-            <span className="w-6 absolute top-11 left-2 text-center border">{assignMark(card.mark)}</span>
-            <span className="w-6 -scale-100 absolute bottom-11 right-2 text-center border">{assignMark(card.mark)}</span>
-            <span className="w-6 h-8 -scale-100 absolute bottom-2 right-2 text-3xl text-center border">{card.number}</span>
+        <div className={`w-48 h-64 border border-blue-400 relative ${className}`}>
+            <span className="h-12 w-10 absolute top-2 left-2 text-center text-5xl border">{card.number}</span>
+            <span className="h-8 w-10 absolute top-14 left-2 text-center text-2xl border">{assignMark(card.mark)}</span>
+            <span className="h-8 w-10 absolute bottom-14 right-2 -scale-100 text-center text-2xl border">{assignMark(card.mark)}</span>
+            <span className="h-12 w-10 absolute bottom-2 right-2 -scale-100 text-center text-5xl border">{card.number}</span>
         </div>
     );
 };
