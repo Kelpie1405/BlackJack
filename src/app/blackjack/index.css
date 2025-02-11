@@ -1,0 +1,38 @@
+@keyframes slide-card {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+.animation-slide-card {
+    animation:slide-card 1s;
+}
+
+@keyframes display-overlay {
+    0% {
+        opacity: 0;
+    }
+    30% {
+        opacity: 100;
+    }
+    70% {
+        opacity: 100;
+    }
+    100% {
+        opacity: 0;
+    }
+}
+
+.animation-overlay {
+    animation: display-overlay 4s;
+}
+
+/*
+【transitionとanimationの違い】
+
+*/
