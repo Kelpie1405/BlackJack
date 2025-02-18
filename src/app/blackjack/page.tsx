@@ -3,6 +3,7 @@ import { useMemo } from 'react';
 import BaseCard from '@/components/cards/BaseCard';
 import Button from '@/components/Button';
 import useBlackJack from '@/hooks/useBlackJack';
+import OpenCurtainEffect from '@/components/oneTimeEffect/openingEffect/OpenCurtainEffect';
 import './index.css'
 
 export default function Home() {
@@ -23,6 +24,7 @@ export default function Home() {
 
     return(
         <div>
+            <OpenCurtainEffect />
             <div className="me-16 mt-16">
                 <h4 className="text-right text-3xl font-bold">
                     <span className="p-4 border-black border-4">合計点数：
