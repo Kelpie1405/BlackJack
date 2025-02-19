@@ -17,19 +17,19 @@ export default function useBlackJack() {
     const [shuffledCardsArray] = useState<Card[]>(() => FisherYatesShuffle([...Cards]));
 
     /**
-     * 手札を管理するState（最初は2枚をセット）
+     * My手札を管理するState（最初は2枚をセット）
      */
     const [cardsInHand, setCardsInHand] = useState<Card[]>(() => shuffledCardsArray.slice(0, 2));
 
     /**
-     * 手札の合計値を計算する（手札が変化したときに実行）
+     * My手札の合計値を計算する（My手札が変化したときに実行）
      */
     const totalScore = useMemo(() => {
         return cardsInHand.reduce((sum, card) => sum + card.number, 0);
     },[cardsInHand]);
 
     /**
-     * 手札を追加するボタンのイベントハンドラ
+     * My手札を追加するボタンのイベントハンドラ
      */
     const handleDrawCard = () => {
         setCardsInHand((prevCardsInHand) => [
@@ -39,5 +39,10 @@ export default function useBlackJack() {
         console.log(cardsInHand);
     };
 
-    return {cardsInHand, totalScore, handleDrawCard};
+    /**
+     * 対戦相手の手札を管理するState（最初は2枚をセット）
+     */
+    const [oppCardsInHand, setOppCardsInHand] = useState<Card[]>(() => shuffledCardsArray.slice(shuffledCardsArray.length - 2, shuffledCardsArray.length));
+
+    return {cardsInHand, totalScore, handleDrawCard, oppCardsInHand};
 };
