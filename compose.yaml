@@ -1,13 +1,26 @@
 services:
-  app:
+  backend:
     build:
-      context: . # Dockerfileがあるディレクトリのパスを定義
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - 5000:5000
+      - 5002:5001 # Socket.io用のポート
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+
+  frontend:
+    build:
+      context: ./frontend # Dockerfileがあるディレクトリのパスを定義
       dockerfile: Dockerfile # Dockerfile名を指定
     ports: # ホストとコンテナのポートを紐づける
       - 3000:3000
     volumes:
-      - .:/app
+      - ./frontend:/app
       - /app/node_modules
       - /app/.next
     environment:
       - WATCHPACK_POLLING=true # ホットリロード機能を有効化
+    depends_on:
+      - backend
