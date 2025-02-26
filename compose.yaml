@@ -18,8 +18,8 @@ services:
       - 3000:3000
     volumes:
       - ./frontend:/app
-      - /app/node_modules
-      - /app/.next
+      # - /app/node_modules
+      # - /app/.next
     environment:
       - WATCHPACK_POLLING=true # ホットリロード機能を有効化
     depends_on:

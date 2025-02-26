@@ -12,5 +12,5 @@ RUN npm install
 COPY . .
 
 # # Express サーバーを起動
-CMD ["node", "server.js"]
+CMD ["npm", "start"]
 # CMD ["npx", "nodemon", "-L", "server.js"]
