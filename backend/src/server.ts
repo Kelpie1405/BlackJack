@@ -5,13 +5,14 @@ import cards from './cards';
 import { cardType, gameObjType } from './type';
 import fisherYatesShuffle from './features/fisherYatesShuffle';
 import hit from "./blackjack/hit"
+import endTurn from './blackjack/endTurn';
 
 const app = express();
 const server = createServer(app);
 
-app.get('/', (req, res) => {
-    res.send('<h1>Hello world</h1>');
-});
+// app.get('/', (req, res) => {
+//     res.send('<h1>Hello world</h1>');
+// });
 
 
 // Socket.IOサーバーを作成し、Node.jsのHTTPサーバとアタッチする
@@ -32,7 +33,7 @@ const waitingPlayers: string[] = [];
 const games: Record<string, gameObjType> = {};
 
 
-io.on("connection", (socket) => {
+io.on("connection", (socket: any) => {
     console.log("🔴接続成功：", socket.id);
 
     /**
@@ -52,10 +53,8 @@ io.on("connection", (socket) => {
 
 
         if (waitingPlayers.length === 2) {
-            const roomId = uuidv4();
-            console.log("一番目：", [...cards]);
+            const roomId: string = uuidv4();
             const initialDeck: cardType[] = fisherYatesShuffle([...cards]);
-            console.log("二番目：", initialDeck);
             const [player1, player2] = waitingPlayers.splice(0, 2);
             const hands: Record<string, cardType[]> = {
                 [player1]: initialDeck.slice(0, 2),
@@ -64,40 +63,51 @@ io.on("connection", (socket) => {
             const deck: cardType[] = initialDeck.slice(4);
 
             games[roomId] = {
-                turn: 0,
                 deck,
                 players: [player1, player2],
                 hands,
                 turnEnds: {
-                    [player1]: true,
-                    [player2]: true,
+                    [player1]: false,
+                    [player2]: false,
                 },
             };
 
-            io.to(player1).emit("start_game", roomId);
-            io.to(player2).emit("start_game", roomId);
-            console.log("JG",roomId);
-            console.log("確認：", games[roomId])
+            io.emit("start_game", roomId);
         }
     });
 
-    socket.on("join_room", (roomId) =>{
+    socket.on("join_room", (roomId: string) =>{
         if (!games[roomId]) {
             console.error(`❌ Error: roomId ${roomId} does not exist in games.`);
             return;
         }
-        console.log("JR",roomId);
+
         const [player1, player2] = games[roomId]["players"];
-        io.to(player1).emit("give_first_hands", games[roomId]["hands"][player1], games[roomId]["hands"][player2]);
-        io.to(player2).emit("give_first_hands", games[roomId]["hands"][player2], games[roomId]["hands"][player1]);
+        io.to(player1).emit("give_hands", games[roomId]["hands"][player1], games[roomId]["hands"][player2]);
+        io.to(player2).emit("give_hands", games[roomId]["hands"][player2], games[roomId]["hands"][player1]);
     });
 
-    socket.on("hit", (playerId: string, roomId: string) => {
+    socket.on("hit", (roomId: string, playerId: string) => {
         games[roomId] = hit(playerId, games[roomId]);
-        console.log(games[roomId]);
+
         const [player1, player2] = games[roomId]["players"];
-        io.to(player1).emit("give_hand", games[roomId]["hands"][player1], games[roomId]["hands"][player2]);
-        io.to(player2).emit("give_hand", games[roomId]["hands"][player2], games[roomId]["hands"][player1]);
+        io.to(player1).emit("give_hands", games[roomId]["hands"][player1], games[roomId]["hands"][player2]);
+        io.to(player2).emit("give_hands", games[roomId]["hands"][player2], games[roomId]["hands"][player1]);
+    });
+
+    socket.on("stand", (roomId: string, playerId: string) => {
+        games[roomId] = endTurn(playerId, games[roomId]);
+
+        const [player1, player2] = games[roomId]["players"];
+        if (games[roomId]["turnEnds"][player1] === true && games[roomId]["turnEnds"][player2] === true) {
+            io.to(player1).to(player2).emit("finish_game");
+        } else {
+            if (playerId === player1) {
+                io.to(player2).emit("is_stand_declared");
+            } else {
+                io.to(player1).emit("is_stand_declared");
+            }
+        }
     });
 
     socket.on("disconnect", () => {

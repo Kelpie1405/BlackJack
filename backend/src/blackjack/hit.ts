@@ -4,7 +4,6 @@ import { cardType, gameObjType } from "../type";
 /**
  * Hit（カードを1枚引く）時の処理を行う関数
  * - 山札からカードを1枚引き、手札に加える
- * - Hitしたら、手番が終了する
  *
  * @param {string} playerId Hitを行ったプレイヤーのsocket.id
  * @param {gameObjType} gameObj ゲームデータ
@@ -18,17 +17,12 @@ export default function hit(playerId: string, gameObj: gameObjType): gameObjType
         [playerId]: [...gameObj.hands[playerId], drawnCard],
     };
 
+    // 引かれたカードが山札から抜ける
     const updatedDeck: cardType[] = gameObj.deck.slice(1);
-
-    const updatedTurnEnds: Record<string, boolean> = {
-        ...gameObj.turnEnds,
-        [playerId]: true,
-    };
 
     return {
         ...gameObj,
         deck: updatedDeck,
         hands: updatedHands,
-        turnEnds: updatedTurnEnds,
     };
 }
